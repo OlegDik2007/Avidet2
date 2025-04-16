@@ -10,19 +10,76 @@ import { format } from 'date-fns'
 import { useState, useEffect } from 'react'
 import { CalendarIcon } from 'lucide-react'
 
+// Define TypeScript interfaces for our state
+interface FlightData {
+  from: string;
+  to: string;
+  departDate: Date | null;
+  returnDate: Date | null;
+  passengers: string;
+  class: string;
+}
+
+interface HotelData {
+  destination: string;
+  checkIn: Date | null;
+  checkOut: Date | null;
+  rooms: string;
+  guests: string;
+}
+
+interface TourData {
+  destination: string;
+  startDate: Date | null;
+  duration: string;
+  travelers: string;
+}
+
+interface CarData {
+  pickupLocation: string;
+  pickupDate: Date | null;
+  dropoffDate: Date | null;
+  carType: string;
+}
+
+interface AirportOptions {
+  origin: any[];
+  destination: any[];
+}
+
+interface FlightSearchResult {
+  itineraries: {
+    segments: {
+      departure: {
+        iataCode: string;
+        at: string;
+      };
+      arrival: {
+        iataCode: string;
+        at: string;
+      };
+    }[];
+    duration: string;
+  }[];
+  price: {
+    total: string;
+    currency: string;
+  };
+}
+
 export default function BookingPage() {
-  const [bookingType, setBookingType] = useState('flights')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [searchResults, setSearchResults] = useState([])
-  const [airportOptions, setAirportOptions] = useState({
+  const [bookingType, setBookingType] = useState<string>('flights')
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const [searchResults, setSearchResults] = useState<FlightSearchResult[]>([])
+  const [airportOptions, setAirportOptions] = useState<AirportOptions>({
     origin: [],
     destination: []
   })
-  const [isSearchingOrigin, setIsSearchingOrigin] = useState(false)
-  const [isSearchingDestination, setIsSearchingDestination] = useState(false)
+  const [isSearchingOrigin, setIsSearchingOrigin] = useState<boolean>(false)
+  const [isSearchingDestination, setIsSearchingDestination] = useState<boolean>(false)
   
   // Flight booking state
-  const [flightData, setFlightData] = useState({
+  const [flightData, setFlightData] = useState<FlightData>({
     from: '',
     to: '',
     departDate: null,
@@ -32,7 +89,7 @@ export default function BookingPage() {
   })
   
   // Hotel booking state
-  const [hotelData, setHotelData] = useState({
+  const [hotelData, setHotelData] = useState<HotelData>({
     destination: '',
     checkIn: null,
     checkOut: null,
@@ -41,7 +98,7 @@ export default function BookingPage() {
   })
   
   // Tour booking state
-  const [tourData, setTourData] = useState({
+  const [tourData, setTourData] = useState<TourData>({
     destination: '',
     startDate: null,
     duration: '7',
@@ -49,14 +106,14 @@ export default function BookingPage() {
   })
   
   // Car rental state
-  const [carData, setCarData] = useState({
+  const [carData, setCarData] = useState<CarData>({
     pickupLocation: '',
     pickupDate: null,
     dropoffDate: null,
     carType: 'economy'
   })
 
-  const handleFlightChange = (field, value) => {
+  const handleFlightChange = (field: string, value: any) => {
     setFlightData(prev => ({
       ...prev,
       [field]: value
@@ -70,7 +127,7 @@ export default function BookingPage() {
     }
   }
 
-  const searchAirports = async (keyword, type) => {
+  const searchAirports = async (keyword: string, type: 'origin' | 'destination') => {
     if (!keyword || keyword.length < 2) return
     
     if (type === 'origin') {
@@ -100,28 +157,28 @@ export default function BookingPage() {
     }
   }
 
-  const handleHotelChange = (field, value) => {
+  const handleHotelChange = (field: string, value: any) => {
     setHotelData(prev => ({
       ...prev,
       [field]: value
     }))
   }
 
-  const handleTourChange = (field, value) => {
+  const handleTourChange = (field: string, value: any) => {
     setTourData(prev => ({
       ...prev,
       [field]: value
     }))
   }
 
-  const handleCarChange = (field, value) => {
+  const handleCarChange = (field: string, value: any) => {
     setCarData(prev => ({
       ...prev,
       [field]: value
     }))
   }
 
-  const handleFlightSearch = async (e) => {
+  const handleFlightSearch = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     setSearchResults([])
@@ -159,7 +216,7 @@ export default function BookingPage() {
     }
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (bookingType === 'flights') {
@@ -422,7 +479,7 @@ export default function BookingPage() {
                     </Select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2">Guests per Room</label>
+                    <label className="block text-sm font-medium mb-2">Guests</label>
                     <Select 
                       value={hotelData.guests} 
                       onValueChange={(value) => handleHotelChange('guests', value)}
@@ -434,7 +491,8 @@ export default function BookingPage() {
                         <SelectItem value="1">1 Guest</SelectItem>
                         <SelectItem value="2">2 Guests</SelectItem>
                         <SelectItem value="3">3 Guests</SelectItem>
-                        <SelectItem value="4">4+ Guests</SelectItem>
+                        <SelectItem value="4">4 Guests</SelectItem>
+                        <SelectItem value="5">5+ Guests</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -452,7 +510,7 @@ export default function BookingPage() {
                 <div className="mb-6">
                   <label className="block text-sm font-medium mb-2">Destination</label>
                   <Input 
-                    placeholder="Country, City or Tour Name" 
+                    placeholder="City or Country" 
                     value={tourData.destination}
                     onChange={(e) => handleTourChange('destination', e.target.value)}
                     required 
@@ -483,7 +541,7 @@ export default function BookingPage() {
                     </Popover>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2">Duration (Days)</label>
+                    <label className="block text-sm font-medium mb-2">Duration</label>
                     <Select 
                       value={tourData.duration} 
                       onValueChange={(value) => handleTourChange('duration', value)}
@@ -492,20 +550,18 @@ export default function BookingPage() {
                         <SelectValue placeholder="Select duration" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="1">1 Day</SelectItem>
                         <SelectItem value="3">3 Days</SelectItem>
                         <SelectItem value="5">5 Days</SelectItem>
                         <SelectItem value="7">7 Days</SelectItem>
                         <SelectItem value="10">10 Days</SelectItem>
                         <SelectItem value="14">14 Days</SelectItem>
-                        <SelectItem value="21">21+ Days</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
                 
                 <div className="mb-6">
-                  <label className="block text-sm font-medium mb-2">Number of Travelers</label>
+                  <label className="block text-sm font-medium mb-2">Travelers</label>
                   <Select 
                     value={tourData.travelers} 
                     onValueChange={(value) => handleTourChange('travelers', value)}
@@ -533,7 +589,7 @@ export default function BookingPage() {
             <TabsContent value="cars">
               <form onSubmit={handleSubmit}>
                 <div className="mb-6">
-                  <label className="block text-sm font-medium mb-2">Pick-up Location</label>
+                  <label className="block text-sm font-medium mb-2">Pickup Location</label>
                   <Input 
                     placeholder="City or Airport" 
                     value={carData.pickupLocation}
@@ -544,7 +600,7 @@ export default function BookingPage() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <div>
-                    <label className="block text-sm font-medium mb-2">Pick-up Date</label>
+                    <label className="block text-sm font-medium mb-2">Pickup Date</label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
@@ -604,7 +660,6 @@ export default function BookingPage() {
                       <SelectItem value="midsize">Midsize</SelectItem>
                       <SelectItem value="suv">SUV</SelectItem>
                       <SelectItem value="luxury">Luxury</SelectItem>
-                      <SelectItem value="van">Van/Minivan</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -616,49 +671,6 @@ export default function BookingPage() {
             </TabsContent>
           </Tabs>
         </Card>
-        
-        <div className="mt-12">
-          <h2 className="text-2xl font-bold mb-6">Why Book With Us</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="p-6">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600">
-                    <path d="M12 2v20"></path>
-                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                  </svg>
-                </div>
-                <h3 className="font-semibold mb-2">Best Price Guarantee</h3>
-                <p className="text-gray-600">We offer competitive prices on all travel services with no hidden fees.</p>
-              </div>
-            </Card>
-            
-            <Card className="p-6">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path>
-                  </svg>
-                </div>
-                <h3 className="font-semibold mb-2">Secure Booking</h3>
-                <p className="text-gray-600">Your personal and payment information is protected with advanced encryption.</p>
-              </div>
-            </Card>
-            
-            <Card className="p-6">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-600">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                    <path d="m9 11 3 3L22 4"></path>
-                  </svg>
-                </div>
-                <h3 className="font-semibold mb-2">24/7 Customer Support</h3>
-                <p className="text-gray-600">Our dedicated team is available around the clock to assist with your travel needs.</p>
-              </div>
-            </Card>
-          </div>
-        </div>
       </div>
     </div>
   )
