@@ -292,7 +292,7 @@ export default function BookingPage() {
                       <PopoverContent className="w-auto p-0">
                         <Calendar
                           mode="single"
-                          selected={flightData.departDate}
+                          selected={flightData.departDate || undefined}
                           onSelect={(date) => handleFlightChange('departDate', date)}
                           initialFocus
                         />
@@ -314,7 +314,7 @@ export default function BookingPage() {
                       <PopoverContent className="w-auto p-0">
                         <Calendar
                           mode="single"
-                          selected={flightData.returnDate}
+                          selected={flightData.returnDate || undefined}
                           onSelect={(date) => handleFlightChange('returnDate', date)}
                           initialFocus
                         />
@@ -429,7 +429,7 @@ export default function BookingPage() {
                       <PopoverContent className="w-auto p-0">
                         <Calendar
                           mode="single"
-                          selected={hotelData.checkIn}
+                          selected={hotelData.checkIn || undefined}
                           onSelect={(date) => handleHotelChange('checkIn', date)}
                           initialFocus
                         />
@@ -451,7 +451,7 @@ export default function BookingPage() {
                       <PopoverContent className="w-auto p-0">
                         <Calendar
                           mode="single"
-                          selected={hotelData.checkOut}
+                          selected={hotelData.checkOut || undefined}
                           onSelect={(date) => handleHotelChange('checkOut', date)}
                           initialFocus
                         />
@@ -533,7 +533,7 @@ export default function BookingPage() {
                       <PopoverContent className="w-auto p-0">
                         <Calendar
                           mode="single"
-                          selected={tourData.startDate}
+                          selected={tourData.startDate || undefined}
                           onSelect={(date) => handleTourChange('startDate', date)}
                           initialFocus
                         />
@@ -614,7 +614,7 @@ export default function BookingPage() {
                       <PopoverContent className="w-auto p-0">
                         <Calendar
                           mode="single"
-                          selected={carData.pickupDate}
+                          selected={carData.pickupDate || undefined}
                           onSelect={(date) => handleCarChange('pickupDate', date)}
                           initialFocus
                         />
@@ -636,7 +636,7 @@ export default function BookingPage() {
                       <PopoverContent className="w-auto p-0">
                         <Calendar
                           mode="single"
-                          selected={carData.dropoffDate}
+                          selected={carData.dropoffDate || undefined}
                           onSelect={(date) => handleCarChange('dropoffDate', date)}
                           initialFocus
                         />
